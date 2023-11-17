@@ -63,6 +63,11 @@ python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16
 python cluster_multiple_files_hashing.py "*_hashing_output/*.centers.pkl"  "*_hashing_output/*.label.jsonl" --output_dir "all_files_hashing"  --n_clusters 16
 ```
 
+```shell
+python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --sampled_kmean
+python cluster_multiple_files_hashing.py "*_hashing_sampled_kmeans_output/*.centers.pkl"  "*_hashing_sampled_kmeans_output/*.label.jsonl" --output_dir "all_files_hashing_sampled_kmeans"  --n_clusters 16
+```
+
 ### Embedding
 ```shell
 python cluster_single_file_embedding.py "eval.jsonl" --n_clusters 16
@@ -78,18 +83,24 @@ python hash_vs_embedding.py
 ```
 ### Result:
 Evaluation is using evaluation data of MS Marco dataset. It consists of 100k records.
-|                                  | v measure score with Full Hash |
-|----------------------------------|--------------------------------|
-| Full Hash                        | 1.000                          |
-| Distributed Hash (11 partition)  | 0.640                          |
-| Distributed Hash (102 partition) | 0.585                          |
+
+|                                                  | v measure score with Full Hash |
+|--------------------------------------------------|--------------------------------|
+| Full Hash                                        | 1.000                          |
+| Distributed Hash (11 partition)                  | 0.640                          |
+| Distributed Hash (11 partition, sampled_kmeans)  | 0.542                          |               |
+| Distributed Hash (102 partition)                 | 0.585                          |
+| Distributed Hash (102 partition, sampled_kmeans) | 0.552                          |
+
 
 |                                      | v measure score with Full Embedding |
 |--------------------------------------|-------------------------------------|
 | Full Embedding                       | 1.000                               |
 | Distributed Embedding (11 partition) | 0.100                               |
 - In terms of agreement, Distributed Hashing Trick is far closer (0.640 vs 0.100) to Full Hash than Distributed Embedding is to Full Embedding. The reason needs to be further investigated.
-- The agreement decreases as the number of partitions increases 
+- Agreement decreases as the number of partitions increases 
+- Agreement of sampled KMeans decreases (0.640 vs 0.542), but the gap decreases as the number of partitions increases (0.585 vs 0.552)
+
 
 |                                  | v measure score with Full Hash |
 |----------------------------------|--------------------------------|
