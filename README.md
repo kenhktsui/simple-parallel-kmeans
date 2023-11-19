@@ -55,6 +55,11 @@ Encodings explored:
      - mapping: {"eval.jsonl__90000__10000___0": 0}
      - result: {"eval.jsonl__0__10000___0": 1}
 
+## Further Optimisations
+- Use minibatch KMeans to reduce memory usage
+- For hashing tricks, use unigram to reduce memory usage
+- For hashing tricks, only hash the first n (e.g. 2000) characters to reduce memory usage
+- Save centroid centers at np.float16 to reduce disk usage.
     
 ## Running
 ### Hashing
@@ -64,8 +69,8 @@ python cluster_multiple_files_hashing.py "*_hashing_output/*.centers.pkl"  "*_ha
 ```
 
 ```shell
-python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --sampled_kmean
-python cluster_multiple_files_hashing.py "*_hashing_sampled_kmeans_output/*.centers.pkl"  "*_hashing_sampled_kmeans_output/*.label.jsonl" --output_dir "all_files_hashing_sampled_kmeans"  --n_clusters 16
+python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --sampled_kmeans
+python cluster_multiple_files_hashing.py "*_hashing_sampled_kmeans_output/*.centers.pkl"  "*_hashing_sampled_kmeans_output/*.label.jsonl" --output_dir "all_files_hashing_sampled_kmeans"  --n_clusters 16  --sampled_kmeans
 ```
 
 ### Embedding
@@ -87,10 +92,10 @@ Evaluation is using evaluation data of MS Marco dataset. It consists of 100k rec
 |                                                  | v measure score with Full Hash |
 |--------------------------------------------------|--------------------------------|
 | Full Hash                                        | 1.000                          |
-| Distributed Hash (11 partition)                  | 0.640                          |
-| Distributed Hash (11 partition, sampled_kmeans)  | 0.542                          |               |
-| Distributed Hash (102 partition)                 | 0.585                          |
-| Distributed Hash (102 partition, sampled_kmeans) | 0.552                          |
+| Distributed Hash (11 partition)                  | 0.546                          |
+| Distributed Hash (11 partition, sampled_kmeans)  | 0.495                          |
+| Distributed Hash (102 partition)                 | 0.548                          |
+| Distributed Hash (102 partition, sampled_kmeans) | 0.471                          |
 
 
 |                                      | v measure score with Full Embedding |
@@ -104,8 +109,8 @@ Evaluation is using evaluation data of MS Marco dataset. It consists of 100k rec
 
 |                                  | v measure score with Full Hash |
 |----------------------------------|--------------------------------|
-| Full Embedding                   | 0.444                          |
-- Agreement of Full Hash vs Full Embedding: 0.444
+| Full Embedding                   | 0.416                          |
+- Agreement of Full Hash vs Full Embedding: 0.416
 
 ## Limitation
 - More dataset with different scale is required to evaluate the performance of the algorithm

@@ -17,7 +17,7 @@ if __name__ == "__main__":
             for idx, line in enumerate(f.readlines()):
                 data.append(json.loads(line)[text_col_name])
 
-        hashing = HashingVectorizer(ngram_range=(1, 2))
+        hashing = HashingVectorizer(ngram_range=(1, 1), n_features=2**20)
         embeddings = hashing.fit_transform(data)
 
         km = KMeans(n_clusters=16, random_state=0)
