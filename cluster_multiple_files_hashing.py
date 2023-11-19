@@ -5,6 +5,7 @@ from scipy.sparse import vstack
 import joblib
 import numpy as np
 from tqdm import tqdm
+from scipy import sparse
 
 
 def cluster_multiple_file(center_path, label_path, output_dir, n_clusters=16, sampled_kmeans=False):
@@ -51,9 +52,8 @@ def cluster_multiple_file(center_path, label_path, output_dir, n_clusters=16, sa
         for k, v in multiple_file_center_clustering_mapping.items():
             f.write(json.dumps({k: v}) + '\n')
 
-    with open(f"{output_dir}/multiple_files_center_clustering_centers.jsonl", "w") as f:
-        for c_i, c in enumerate(centers):
-            f.write(json.dumps({c_i: c.tolist()}) + '\n')
+    joblib.dump({c_i: sparse.csr_matrix(c) for c_i, c in enumerate(centers)},
+                f"{output_dir}/multiple_files_center_clustering_centers.pkl")
 
     labels = {}
     for lp in tqdm(labels_path):
