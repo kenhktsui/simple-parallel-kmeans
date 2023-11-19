@@ -31,7 +31,7 @@ Encodings explored:
 
 
 ## Algorithm
-1. Map Step: Running clustering on a single file, by chunking it into n chunks
+1. Map Step: Running clustering on a single file, by chunking it into n chunks `cluster_single_file_hashing.py`
    - chunk1
      - 16 cluster centroids 
        - description: embedding of 16 cluster centroids
@@ -46,7 +46,7 @@ Encodings explored:
      - 16 cluster centroids
      - membership in chunk3
    - ...
-2. Reduce Step: Running clustering on multiple files 
+2. Reduce Step: Running clustering on multiple files `cluster_multiple_files_hashing.py`
    - run clustering on 16 x n cluster centroids to get 16 cluster centroids
    - reassign membership of all chunks to the 16 cluster centroids
    - outputs:
@@ -54,6 +54,12 @@ Encodings explored:
      - 16 cluster centroids: {"0": [dense or sparse vector]}
      - mapping: {"eval.jsonl__90000__10000___0": 0}
      - result: {"eval.jsonl__0__10000___0": 1}
+3. Produce partitions (multiple jsonl files) based on clustering result `partition_cluster_data.py`
+   - outputs:
+     - 0.jsonl
+     - 1.jsonl
+     - 2.jsonl
+     - ...
 
 ## Further Optimisations
 - Use minibatch KMeans to reduce memory usage
@@ -66,17 +72,20 @@ Encodings explored:
 ```shell
 python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16
 python cluster_multiple_files_hashing.py "*_hashing_output/*.centers.pkl"  "*_hashing_output/*.label.jsonl" --output_dir "all_files_hashing"  --n_clusters 16
+python partition_cluster_data.py "all_files_hashing/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing/partitions"
 ```
 
 ```shell
 python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --sampled_kmeans
 python cluster_multiple_files_hashing.py "*_hashing_sampled_kmeans_output/*.centers.pkl"  "*_hashing_sampled_kmeans_output/*.label.jsonl" --output_dir "all_files_hashing_sampled_kmeans"  --n_clusters 16  --sampled_kmeans
+python partition_cluster_data.py "all_files_hashing_sampled_kmeans/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing_sampled_kmeans/partitions"
 ```
 
 ### Embedding
 ```shell
 python cluster_single_file_embedding.py "eval.jsonl" --n_clusters 16
 python cluster_multiple_files_embedding.py "*_embedding_output/*.centers.jsonl"  "*_embedding_output/*.label.jsonl" --output_dir "all_files_embedding"  --n_clusters 16
+python partition_cluster_data.py "all_files_embedding/multiple_files_center_clustering_result.jsonl" "." "all_files_embedding/partitions"
 ```
 
 ## Benchmarking
