@@ -19,6 +19,8 @@ if __name__ == "__main__":
     parser.add_argument("write_dir", type=str)
     args = parser.parse_args()
 
+    os.makedirs(args.write_dir)
+
     data = []
     with open(args.clustering_result) as f:
         for l in f.readlines():
