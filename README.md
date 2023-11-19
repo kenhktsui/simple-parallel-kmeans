@@ -111,10 +111,8 @@ Evaluation is using evaluation data of MS Marco dataset. It consists of 100k rec
 |--------------------------------------|-------------------------------------|
 | Full Embedding                       | 1.000                               |
 | Distributed Embedding (11 partition) | 0.100                               |
-- In terms of agreement, Distributed Hashing Trick is far closer (0.640 vs 0.100) to Full Hash than Distributed Embedding is to Full Embedding. The reason needs to be further investigated.
-- Agreement decreases as the number of partitions increases 
-- Agreement of sampled KMeans decreases (0.640 vs 0.542), but the gap decreases as the number of partitions increases (0.585 vs 0.552)
-
+- In terms of agreement, Distributed Hashing Trick is far closer (0.546 vs 0.100) to Full Hash than Distributed Embedding is to Full Embedding. The reason needs to be further investigated.
+- Using sampled KMeans results in worse agreement (0.495 vs 0.546 and 0.471 vs 0.548).
 
 |                                  | v measure score with Full Hash |
 |----------------------------------|--------------------------------|
