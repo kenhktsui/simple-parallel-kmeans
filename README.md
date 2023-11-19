@@ -70,22 +70,22 @@ Encodings explored:
 ## Running
 ### Hashing
 ```shell
-python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16
+python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --n_process 4
 python cluster_multiple_files_hashing.py "*_hashing_output/*.centers.pkl"  "*_hashing_output/*.label.jsonl" --output_dir "all_files_hashing"  --n_clusters 16
-python partition_cluster_data.py "all_files_hashing/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing/partitions"
+python partition_cluster_data.py "all_files_hashing/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing/partitions"  --n_process 4
 ```
 
 ```shell
-python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --sampled_kmeans
+python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16  --n_process 4 --sampled_kmeans
 python cluster_multiple_files_hashing.py "*_hashing_sampled_kmeans_output/*.centers.pkl"  "*_hashing_sampled_kmeans_output/*.label.jsonl" --output_dir "all_files_hashing_sampled_kmeans"  --n_clusters 16  --sampled_kmeans
-python partition_cluster_data.py "all_files_hashing_sampled_kmeans/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing_sampled_kmeans/partitions"
+python partition_cluster_data.py "all_files_hashing_sampled_kmeans/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing_sampled_kmeans/partitions"  --n_process 4
 ```
 
 ### Embedding
 ```shell
-python cluster_single_file_embedding.py "eval.jsonl" --n_clusters 16
+python cluster_single_file_embedding.py "eval.jsonl" --n_clusters 16 --n_process 4
 python cluster_multiple_files_embedding.py "*_embedding_output/*.centers.jsonl"  "*_embedding_output/*.label.jsonl" --output_dir "all_files_embedding"  --n_clusters 16
-python partition_cluster_data.py "all_files_embedding/multiple_files_center_clustering_result.jsonl" "." "all_files_embedding/partitions"
+python partition_cluster_data.py "all_files_embedding/multiple_files_center_clustering_result.jsonl" "." "all_files_embedding/partitions"  --n_process 4
 ```
 
 ## Benchmarking
