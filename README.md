@@ -66,7 +66,12 @@ Encodings explored:
 - For hashing tricks, use unigram to reduce memory usage
 - For hashing tricks, only hash the first n (e.g. 2000) characters to reduce memory usage
 - Save centroid centers at np.float16 to reduce disk usage.
-    
+
+## Installation
+```shell
+pip install -r requirements.txt
+```
+
 ## Running
 It assumes all data files are in jsonl.
 
