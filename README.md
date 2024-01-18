@@ -1,4 +1,4 @@
-# A Simple Parallelizable K-Means for Large Dataset
+# A Simple Parallelizable K-Means for Large Dataset - It works with SLURM and local machine
 ## Motivation
 How to do we do clustering of a large dataset (say 3TB) and partition it into k portions?
 As we have a desired number of clusters, we can use k-means clustering to do the job.
@@ -68,25 +68,56 @@ Encodings explored:
 - Save centroid centers at np.float16 to reduce disk usage.
     
 ## Running
-### Hashing
+It assumes all data files are in jsonl.
+
+### Locally
+#### Hashing
 ```shell
 python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16 --n_process 4
 python cluster_multiple_files_hashing.py "*_hashing_output/*.centers.pkl"  "*_hashing_output/*.label.jsonl" --output_dir "all_files_hashing"  --n_clusters 16
 python partition_cluster_data.py "all_files_hashing/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing/partitions"  --n_process 4
 ```
 
-```shell
-python cluster_single_file_hashing.py "eval.jsonl" --n_clusters 16  --n_process 4 --sampled_kmeans
-python cluster_multiple_files_hashing.py "*_hashing_sampled_kmeans_output/*.centers.pkl"  "*_hashing_sampled_kmeans_output/*.label.jsonl" --output_dir "all_files_hashing_sampled_kmeans"  --n_clusters 16  --sampled_kmeans
-python partition_cluster_data.py "all_files_hashing_sampled_kmeans/multiple_files_center_clustering_result.jsonl" "." "all_files_hashing_sampled_kmeans/partitions"  --n_process 4
-```
-
-### Embedding
+#### Embedding (TODO)
 ```shell
 python cluster_single_file_embedding.py "eval.jsonl" --n_clusters 16 --n_process 4
 python cluster_multiple_files_embedding.py "*_embedding_output/*.centers.jsonl"  "*_embedding_output/*.label.jsonl" --output_dir "all_files_embedding"  --n_clusters 16
 python partition_cluster_data.py "all_files_embedding/multiple_files_center_clustering_result.jsonl" "." "all_files_embedding/partitions"  --n_process 4
 ```
+
+### In SLURM (typically in a supercomputer)
+All shell scripts are in `slurm_template` folder. Please modify the scripts to fit your needs.
+1. Map Step - Clustering each file
+You can submit job arrays to SLURM, given that your file names are with an integer index.
+For example, the below script will cluster 100 files with names `data_0.jsonl`, `data_1.jsonl`, ..., `data_99.jsonl` in parallel. There are 100 jobs in total.
+```shell
+sbatch cluster_single_file_hashing.sh
+````
+Or you can run sequentially with the below script 
+```python
+import os
+
+
+folder_path = DATA_FOLDER_TO_CLUSTER
+output_dir_parent = OUTPUT_DIR
+files = os.listdir(folder_path)
+
+for file_name in files:
+    print(f"Started clustering {file_name}")
+    if file_name.endswith(".jsonl"):
+        command = f"python cluster_single_file_hashing.py {os.path.join(folder_path, file_name)} --output_dir_parent {output_dir_parent} --n_clusters 16 --batch_size 30000 --n_process 12"
+        os.system(command)
+        print(f"Finished clustering {file_name}")
+```
+2. Reduce Step
+```shell
+sbatch cluster_multiple_files_hashing.sh
+```
+3. Partition Data
+```shell
+sbatch partition.sh
+```
+
 
 ## Benchmarking
 ```shell
