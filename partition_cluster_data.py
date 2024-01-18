@@ -22,7 +22,8 @@ if __name__ == "__main__":
     parser.add_argument("--n_process", type=int, default=4)
     args = parser.parse_args()
 
-    os.makedirs(args.write_dir)
+    if not os.path.exists(args.write_dir):
+        os.makedirs(args.write_dir)
 
     data = []
     n_clusters = 0
